@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
+import os
 from pathlib import Path
 import sys
 
@@ -55,7 +56,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
 ]
 
-#APPEND_SLASH = False
+
 
 #CORS_ALLOWED_ORIGINS = ['http://localhost', 'http://ec2-16-171-253-51.eu-north-1.compute.amazonaws.com']
 
