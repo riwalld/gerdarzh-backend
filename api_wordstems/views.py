@@ -1,6 +1,6 @@
 
 from django.http import HttpResponse
-from geriadur_api_django.models import Wordstem
+from geriadur_api_django.models import WordStem
 from .dto import WordstemBasicDTO
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -10,7 +10,7 @@ from geriadur_api_django.constants import GenderEnum, WordClassEnum, LanguageEnu
 @api_view(['GET', 'POST'])
 def crudWordstems(request):
     if request.method == 'GET':
-        wordstems = Wordstem.objects.all()
+        wordstems = WordStem.objects.all()
         show_wordstems = []
         for wordstem in wordstems:
             wordstemBasicDto = get_wordstem_basic_dto(wordstem)

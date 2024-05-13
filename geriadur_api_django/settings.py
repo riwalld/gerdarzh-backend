@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-iw2uv57&i8mj3v*#0=rq8$kw(4-msax44aypm29x6-g_+(2scy
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['ec2-16-171-253-51.eu-north-1.compute.amazonaws.com','localhost']
 
 
 # Application definition
@@ -56,10 +56,8 @@ MIDDLEWARE = [
 ]
 
 #APPEND_SLASH = False
-"""
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost:4000',  
-    ]"""
+
+#CORS_ALLOWED_ORIGINS = ['http://localhost', 'http://ec2-16-171-253-51.eu-north-1.compute.amazonaws.com']
 
 CORS_ALLOW_ALL_ORIGINS = True
 
