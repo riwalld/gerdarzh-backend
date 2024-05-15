@@ -4,4 +4,5 @@ from dataclasses import dataclass
 class SourceDTO:
     sourceId: int
     sourceOriginalName: str
+    sourceEngName: str
     sourceAbbreviation: str

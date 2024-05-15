@@ -14,7 +14,7 @@ def crudSources(request):
         sourcesDto = []
         for source in sources:
             print(source)
-            sourceDtO = SourceDTO(source.source_id ,source.source_name_original, source.abbreviation)
+            sourceDtO = SourceDTO(source.source_id ,source.source_name_original,source.source_name_english, source.abbreviation)
             sourcesDto.append(asdict(sourceDtO))
         response = Response(sourcesDto)
         return response
