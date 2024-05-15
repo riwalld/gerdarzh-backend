@@ -11,5 +11,5 @@ urlpatterns = [
     path('properNouns/', include('api_propernouns.urls')),
     path('sessionGameData/', include('api_sessiongame.urls')),
     path('sources/', include('api_sources.urls')),
-
+    path('semanticFields/', include('api_semanticfield.urls')),
 ]
