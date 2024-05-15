@@ -60,7 +60,21 @@ class Propernoun(models.Model):
     class Meta:
         managed = False
         db_table = 'propernoun'
-         
+        
+class Source(models.Model):
+    date_publication = models.IntegerField()
+    language = models.IntegerField()
+    type_source = models.IntegerField()
+    source_id = models.BigAutoField(primary_key=True)
+    abbreviation = models.CharField(max_length=255)
+    source_name_english = models.CharField(max_length=255)
+    source_name_original = models.CharField(max_length=255, blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'source'
+          
 class WordStem(models.Model):
     gender = models.IntegerField(blank=True, null=True)
     word_class = models.IntegerField(blank=True, null=True)
@@ -74,7 +88,7 @@ class WordStem(models.Model):
     phonetic = models.CharField(max_length=255, blank=True, null=True)
     ref_words_eng = models.CharField(max_length=255, blank=True, null=True)
     ref_words_fr = models.CharField(max_length=255)
-
+    source =models.ManyToManyField(Source,through='WordStemSource')
     class Meta:
         managed = False
         db_table = 'word_stem'
@@ -91,19 +105,7 @@ class Quote(models.Model):
         db_table = 'quote'
 
 
-class Source(models.Model):
-    date_publication = models.IntegerField()
-    language = models.IntegerField()
-    type_source = models.IntegerField()
-    source_id = models.BigAutoField(primary_key=True)
-    abbreviation = models.CharField(max_length=255)
-    source_name_english = models.CharField(max_length=255)
-    source_name_original = models.CharField(max_length=255, blank=True, null=True)
-    description = models.TextField(blank=True, null=True)
 
-    class Meta:
-        managed = False
-        db_table = 'source'
 
 
 class SourceAuthor(models.Model):
@@ -167,8 +169,8 @@ class WordStemQuote(models.Model):
 
 
 class WordStemSource(models.Model):
-    source = models.OneToOneField(Source, models.DO_NOTHING, primary_key=True)  # The composite primary key (source_id, word_stem_id) found, that is not supported. The first column is selected.
-    word_stem = models.ForeignKey(WordStem, models.DO_NOTHING)
+    source = models.ForeignKey(Source, on_delete=models.CASCADE)  # The composite primary key (source_id, word_stem_id) found, that is not supported. The first column is selected.
+    word_stem = models.ForeignKey(WordStem, on_delete=models.CASCADE, db_column="word_stem_id")
 
     class Meta:
         managed = False

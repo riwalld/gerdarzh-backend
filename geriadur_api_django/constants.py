@@ -1,3 +1,50 @@
+GENDER_CHOICES = {
+  0: "GM",
+  1: "GF",
+  2: "GN",
+  3: "GU",
+  4: "NO",
+}
+
+LANGUAGE_CHOICES = {
+  0: "LB",
+  1: "LOB",
+  2: "LBQ",
+  3: "LC",
+  5: "LF",
+  6: "LG",
+  7: "LGER",
+  8: "LIE",
+  9: "LIR",
+  10: "LOI",
+  11: "LS",
+  12: "LPC",
+  13: "LW",
+  14: "LLT",
+}
+
+WORDCLASS_CHOICES = {
+  0: "WN",
+  1: "WV",
+  2: "WADJ",
+  3: "WADV",
+  4: "WART",
+  5: "WPRN",
+  6: "WPREP",
+  7: "WCONJ",
+  8: "WAF",
+}
+
+
+LANGUAGE_CHOICES_REVERSE = {v: k for k, v in LANGUAGE_CHOICES.items()}
+GENDER_CHOICES_REVERSE = {v: k for k, v in GENDER_CHOICES.items()}
+WORDCLASS_CHOICES_REVERSE = {v: k for k, v in WORDCLASS_CHOICES.items()}
+
+def get_keys_by_value(json_obj, target_value):
+    for key, value in json_obj.items():
+        if value == target_value:
+          return key
+
 from enum import Enum
 
 class GenderEnum(Enum):
