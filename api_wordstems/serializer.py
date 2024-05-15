@@ -24,7 +24,7 @@ class WordStemSerializer(serializers.Serializer):
     descrEng = serializers.CharField(source="descr_eng", allow_blank=True, required=False)
     descrFr = serializers.CharField(source="descr_fr", allow_blank=True, required=False)
     phonetic = serializers.CharField(allow_blank=True, required=False)
-    sources = serializers.PrimaryKeyRelatedField(source="source",queryset=Source.objects.all(), many=True, write_only=True)
+    sources = serializers.PrimaryKeyRelatedField(source="source",queryset=Source.objects.all(), many=True)
 
     def create(self, validated_data):
         print(validated_data)
