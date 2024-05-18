@@ -1,5 +1,5 @@
 
-from random import sample
+from random import sample, shuffle
 from django.http import HttpResponse
 from geriadur_api_django.models import Propernoun, WordStem, LitTrans
 from .dto import GameSessionStepDto, PCelticRadicalDto, ProperNameDto
@@ -35,7 +35,7 @@ def get_5_response_choices(good_lit_trans):
 
     # Shuffle the list of literal translations
     all_literal_translations = list(all_literal_translations)
-    sample(all_literal_translations, len(all_literal_translations))
+    shuffle(all_literal_translations)
 
     for literal_trans in all_literal_translations:
         if literal_trans.lit_trans_fr != good_lit_trans.lit_trans_fr:
@@ -44,7 +44,7 @@ def get_5_response_choices(good_lit_trans):
             break
 
     # Shuffle the selected response choices
-    sample(selected_lit_trans, len(selected_lit_trans))
+    shuffle(selected_lit_trans)
 
     return selected_lit_trans
 
