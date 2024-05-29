@@ -51,4 +51,4 @@ def get_5_response_choices(good_lit_trans):
 
 def find_15_proper_nouns_by_word_theme(word_theme):
     proper_nouns = Propernoun.objects.filter(word_theme=word_theme, confirmed=1)
-    return sample(list(proper_nouns), 15)
+    return sample(list(proper_nouns), 10)
