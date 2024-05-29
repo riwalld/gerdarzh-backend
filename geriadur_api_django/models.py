@@ -38,28 +38,7 @@ class SemanticField(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'semantic_field'
-        
-class Propernoun(models.Model):
-    propernoun_id = models.BigAutoField(primary_key=True)
-    lit_trans = models.OneToOneField(LitTrans, models.DO_NOTHING, blank=True, null=True)
-    word_theme = models.BigIntegerField(blank=True, null=True)
-    current_name = models.CharField(max_length=255)
-    etymo_name = models.CharField(max_length=255)
-    year = models.IntegerField(blank=True, null=True)
-    period = models.CharField(max_length=45, blank=True, null=True)
-    place = models.CharField(max_length=45, blank=True, null=True)
-    country = models.CharField(max_length=45, blank=True, null=True)
-    short_descr_eng = models.CharField(max_length=150, blank=True, null=True)
-    short_descr_fr = models.CharField(max_length=150, blank=True, null=True)
-    descr_eng = models.CharField(max_length=3000, blank=True, null=True)
-    descr_fr = models.CharField(max_length=3000, blank=True, null=True)
-    image = models.TextField(blank=True, null=True)
-    confirmed = models.IntegerField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'propernoun'
+        db_table = 'semantic_field'      
         
 class Source(models.Model):
     date_publication = models.IntegerField()
@@ -93,7 +72,27 @@ class WordStem(models.Model):
         managed = False
         db_table = 'word_stem'
 
-
+class Propernoun(models.Model):
+    propernoun_id = models.BigAutoField(primary_key=True)
+    lit_trans = models.OneToOneField(LitTrans, models.DO_NOTHING, blank=True, null=True)
+    cultural_area = models.BigIntegerField(blank=True, null=True)
+    word_theme = models.BigIntegerField(blank=True, null=True)
+    current_name = models.CharField(max_length=255)
+    etymo_name = models.CharField(max_length=255)
+    year = models.IntegerField(blank=True, null=True)
+    period = models.CharField(max_length=45, blank=True, null=True)
+    place = models.CharField(max_length=45, blank=True, null=True)
+    country = models.CharField(max_length=45, blank=True, null=True)
+    short_descr_eng = models.CharField(max_length=150, blank=True, null=True)
+    short_descr_fr = models.CharField(max_length=150, blank=True, null=True)
+    descr_eng = models.CharField(max_length=3000, blank=True, null=True)
+    descr_fr = models.CharField(max_length=3000, blank=True, null=True)
+    image = models.TextField(blank=True, null=True)
+    confirmed = models.IntegerField(blank=True, null=True)
+    #wordstems = models.ManyToManyField(WordStem,through='WordStemPropernoun')
+    class Meta:
+        managed = False
+        db_table = 'propernoun'
 
 class Quote(models.Model):
     quote_id = models.BigAutoField(primary_key=True)

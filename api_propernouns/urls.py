@@ -1,9 +1,11 @@
 
 from django.urls import path, include
-from . import views
+from .views import ProperNounsViewSet
+from rest_framework.routers import SimpleRouter
+
+router = SimpleRouter()
+router.register(r'', ProperNounsViewSet, basename='propernouns')
 
 urlpatterns = [
-    path('', views.crudProperNouns),
-    #path('<int:id>', views.getOne),
-    #path('Str', views.getProtoCelticStrList),
+    path('', include(router.urls)),
 ]

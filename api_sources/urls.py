@@ -4,7 +4,5 @@ from . import views
 
 urlpatterns = [
     path('', views.crudSources),
-    #path('<int:id>', views.getOne),
-    #path('Str', views.getProtoCelticStrList),
 
 ]

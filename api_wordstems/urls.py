@@ -6,10 +6,8 @@ from rest_framework.routers import SimpleRouter
 router = SimpleRouter()
 router.register(r'', WordstemsViewSet, basename='word_stems')
 
+
+
 urlpatterns = [
     path('', include(router.urls)),
-    #path('<int:id>', views.getOne),
-    #path('Str', views.getProtoCelticStrList),
-
-
 ]
