@@ -17,6 +17,7 @@ class ProperNameDto:
     etymoName: str
     descr: str
     image: str
+    imgCaption: str
     
 @dataclass
 class GameSessionStepDto:

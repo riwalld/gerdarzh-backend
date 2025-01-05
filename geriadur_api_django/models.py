@@ -89,7 +89,7 @@ class Propernoun(models.Model):
     descr_fr = models.CharField(max_length=3000, blank=True, null=True)
     image = models.TextField(blank=True, null=True)
     confirmed = models.IntegerField(blank=True, null=True)
-    #wordstems = models.ManyToManyField(WordStem,through='WordStemPropernoun')
+    img_caption = models.CharField(max_length=255)
     class Meta:
         managed = False
         db_table = 'propernoun'

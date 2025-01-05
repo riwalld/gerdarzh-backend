@@ -24,6 +24,7 @@ class PropernounSerializer(serializers.Serializer):
     period = serializers.CharField(allow_blank=True,required=False)
     year = serializers.IntegerField(required=False)
     image = serializers.CharField(allow_blank=True,required=False)
+    imgCaption= serializers.CharField(source="img_caption", allow_blank=True,required=False)
 
     def create(self, validated_data):
         lit_trans_data = validated_data.pop('lit_trans')

@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 import os
 from pathlib import Path
 import sys
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -32,7 +33,7 @@ ALLOWED_HOSTS = ['ec2-16-171-253-51.eu-north-1.compute.amazonaws.com',
                  'localhost','127.0.0.1',
                  '13.48.4.200/30']
 
-
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # Application definition
 
 INSTALLED_APPS = [
@@ -91,16 +92,12 @@ WSGI_APPLICATION = 'geriadur_api_django.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',   # Database engine
-        'NAME': 'database_1',                   # Database name
-        'USER': 'admin',                        # Database user
-        'PASSWORD': 'passpass',                 # Database password
-        'HOST': 'database-1.cj8kg4q2qapg.eu-north-1.rds.amazonaws.com',  # Database host
-        'PORT': '3306',                         # Database port
-        'OPTIONS': {
-            'charset': 'utf8mb4',               # Set character set to utf-8
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"  # Optional: Set SQL mode
-        }
+        'ENGINE': 'django.db.backends.mysql',  
+        'NAME': config('DBNAME'),            
+        'USER': config('DBUSER'),            
+        'PASSWORD': config('DBPASSWORD'), 
+        'HOST': config('DBHOST'),        
+        'PORT': config('DBPORT', default=3306),
     }
 }
 

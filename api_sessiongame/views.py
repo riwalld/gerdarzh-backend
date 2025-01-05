@@ -14,7 +14,7 @@ def getSessionGameData(request):
     
     sessionGameData = []
     for properNoun in properNouns:
-        properNameDto = ProperNameDto(properNoun.current_name, properNoun.etymo_name, properNoun.descr_fr, properNoun.image)
+        properNameDto = ProperNameDto(properNoun.current_name, properNoun.etymo_name, properNoun.descr_fr, properNoun.image, properNoun.img_caption)
         proposedLiteralTranslationList = get_5_response_choices(properNoun.lit_trans)
         
         pCelticRadicalList = []
