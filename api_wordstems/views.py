@@ -4,21 +4,30 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
+
 class WordstemsViewSet(viewsets.ModelViewSet):
     serializer_class = WordStemSerializer
-    #print('show_wordstems')
-    
+    # print('show_wordstems')
+
     def get_queryset(self):
         print("testGetAll")
         wordstems = WordStem.objects.all()
         return wordstems
-    
-    @action(detail=False, methods=['get'], url_path='Str')
+
+    @action(detail=False, methods=["get"], url_path="Str")
     def getProtoCelticStrList(self, request):
         print("testGetPcRadicals")
         pcRadicals = WordStem.objects.all()
         pcRadicalsStr = []
         for radical in pcRadicals:
-            pcRadicalsStr.append({"id" :radical.word_stem_id,
-                         "name":radical.word_stem_name})
+            pcRadicalsStr.append(
+                {"id": radical.word_stem_id, "name": radical.word_stem_name}
+            )
         return Response(pcRadicalsStr)
+
+
+class WordstemViewSet(viewsets.ModelViewSet):
+    serializer_class = WordStemSerializer
+
+    def get_queryset(self):
+        return WordStem.objects.get(id=self.kwargs.get("id"))
