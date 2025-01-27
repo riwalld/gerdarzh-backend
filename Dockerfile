@@ -38,5 +38,5 @@ COPY --chown=${UID:-33}:${GID:-33} . /app
 FROM build as prod
 COPY --chown=${UID:-33}:${GID:-33} ./start-prod-server.sh /usr/local/bin/start-prod-server.sh
 USER ${UID:-33}
-RUN chmod +x /usr/local/bin/start-prod-server.sh
-CMD ["start-prod-server.sh"]
+RUN chmod 777 /usr/local/bin/start-prod-server.sh
+CMD ["sh", "/usr/local/bin/start-prod-server.sh"]
