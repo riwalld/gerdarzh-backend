@@ -8,5 +8,4 @@ router.register(r"", WordstemsViewSet, basename="word_stems")
 
 urlpatterns = [
     path("", include(router.urls)),
-    path("<int:pk>", WordstemViewSet.as_view(), name="create"),
 ]
