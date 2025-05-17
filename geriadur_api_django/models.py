@@ -17,8 +17,7 @@ class Author(models.Model):
     biography = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
-        managed = False
-        db_table = 'author'
+        db_table = "author"
 
 
 class LitTrans(models.Model):
@@ -28,9 +27,9 @@ class LitTrans(models.Model):
     lit_trans_fr = models.CharField(max_length=255)
 
     class Meta:
-        managed = False
-        db_table = 'lit_trans'
-        
+        db_table = "lit_trans"
+
+
 class SemanticField(models.Model):
     sem_field_id = models.BigAutoField(primary_key=True)
     sem_field_name_eng = models.CharField(max_length=255)
@@ -38,8 +37,9 @@ class SemanticField(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'semantic_field'      
-        
+        db_table = "semantic_field"
+
+
 class Source(models.Model):
     date_publication = models.IntegerField()
     language = models.IntegerField()
@@ -51,26 +51,35 @@ class Source(models.Model):
     description = models.TextField(blank=True, null=True)
 
     class Meta:
-        managed = False
-        db_table = 'source'
-          
+        db_table = "source"
+
+
 class WordStem(models.Model):
     gender = models.IntegerField(blank=True, null=True)
     word_class = models.IntegerField(blank=True, null=True)
     word_stem_language = models.IntegerField()
     word_stem_name = models.CharField(max_length=255)
     first_occurence = models.IntegerField()
-    sem_field = models.ForeignKey(SemanticField, models.DO_NOTHING, blank=True, null=True)
+    sem_field = models.ForeignKey(
+        SemanticField, models.DO_NOTHING, blank=True, null=True
+    )
     word_stem_id = models.BigAutoField(primary_key=True)
     descr_eng = models.CharField(max_length=255, blank=True, null=True)
     descr_fr = models.CharField(max_length=255, blank=True, null=True)
     phonetic = models.CharField(max_length=255, blank=True, null=True)
     ref_words_eng = models.CharField(max_length=255, blank=True, null=True)
     ref_words_fr = models.CharField(max_length=255)
-    source =models.ManyToManyField(Source,through='WordStemSource')
+    source = models.ManyToManyField(Source, through="WordStemSource")
+    parent_stems = models.ManyToManyField(
+        "self", symmetrical=False, blank=True, related_name="child_stems_reverse"
+    )
+    child_stems = models.ManyToManyField(
+        "self", symmetrical=False, blank=True, related_name="parent_stems_reverse"
+    )
+
     class Meta:
-        managed = False
-        db_table = 'word_stem'
+        db_table = "word_stem"
+
 
 class Propernoun(models.Model):
     propernoun_id = models.BigAutoField(primary_key=True)
@@ -90,31 +99,29 @@ class Propernoun(models.Model):
     image = models.TextField(blank=True, null=True)
     confirmed = models.IntegerField(blank=True, null=True)
     img_caption = models.CharField(max_length=255)
+
     class Meta:
-        managed = False
-        db_table = 'propernoun'
+        db_table = "propernoun"
+
 
 class Quote(models.Model):
     quote_id = models.BigAutoField(primary_key=True)
-    source = models.ForeignKey('Source', models.DO_NOTHING, blank=True, null=True)
+    source = models.ForeignKey("Source", models.DO_NOTHING, blank=True, null=True)
     quote_text = models.CharField(max_length=255)
 
     class Meta:
-        managed = False
-        db_table = 'quote'
-
-
-
+        db_table = "quote"
 
 
 class SourceAuthor(models.Model):
-    author = models.OneToOneField(Author, models.DO_NOTHING, primary_key=True)  # The composite primary key (author_id, source_id) found, that is not supported. The first column is selected.
+    author = models.OneToOneField(
+        Author, models.DO_NOTHING, primary_key=True
+    )  # The composite primary key (author_id, source_id) found, that is not supported. The first column is selected.
     source = models.ForeignKey(Source, models.DO_NOTHING)
 
     class Meta:
-        managed = False
-        db_table = 'source_author'
-        unique_together = (('author', 'source'),)
+        db_table = "source_author"
+        unique_together = (("author", "source"),)
 
 
 class User(models.Model):
@@ -133,45 +140,55 @@ class User(models.Model):
     role = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
-        managed = False
-        db_table = 'user'
+        db_table = "user"
 
+
+"""
 class WordStemParent(models.Model):
-    child = models.OneToOneField(WordStem, models.DO_NOTHING, primary_key=True)  # The composite primary key (child_id, parent_id) found, that is not supported. The first column is selected.
-    parent = models.ForeignKey(WordStem, models.DO_NOTHING, related_name='wordstemparent_parent_set')
+    child = models.OneToOneField(
+        WordStem, models.DO_NOTHING, primary_key=True
+    )  # The composite primary key (child_id, parent_id) found, that is not supported. The first column is selected.
+    parent = models.ForeignKey(
+        WordStem, models.DO_NOTHING, related_name="wordstemparent_parent_set"
+    )
 
     class Meta:
         managed = False
-        db_table = 'word_stem_parent'
-        unique_together = (('child', 'parent'),)
+        db_table = "word_stem_parent"
+        unique_together = (("child", "parent"),)"""
 
 
 class WordStemPropernoun(models.Model):
-    word_stem_pc_key = models.IntegerField(primary_key=True)  # The composite primary key (word_stem_pc_key, propernoun_id) found, that is not supported. The first column is selected.
+    word_stem_pc_key = models.IntegerField(
+        primary_key=True
+    )  # The composite primary key (word_stem_pc_key, propernoun_id) found, that is not supported. The first column is selected.
     propernoun = models.ForeignKey(Propernoun, on_delete=models.CASCADE)
     word_stem = models.ForeignKey(WordStem, on_delete=models.CASCADE)
 
     class Meta:
-        managed = False
-        db_table = 'word_stem_propernoun'
-        unique_together = (('word_stem_pc_key', 'propernoun_id'),)
+        db_table = "word_stem_propernoun"
+        unique_together = (("word_stem_pc_key", "propernoun_id"),)
 
 
 class WordStemQuote(models.Model):
-    quote = models.OneToOneField(Quote, models.DO_NOTHING, primary_key=True)  # The composite primary key (quote_id, word_stem_id) found, that is not supported. The first column is selected.
+    quote = models.OneToOneField(
+        Quote, models.DO_NOTHING, primary_key=True
+    )  # The composite primary key (quote_id, word_stem_id) found, that is not supported. The first column is selected.
     word_stem = models.ForeignKey(WordStem, models.DO_NOTHING)
 
     class Meta:
-        managed = False
-        db_table = 'word_stem_quote'
-        unique_together = (('quote', 'word_stem'),)
+        db_table = "word_stem_quote"
+        unique_together = (("quote", "word_stem"),)
 
 
 class WordStemSource(models.Model):
-    source = models.ForeignKey(Source, on_delete=models.CASCADE)  # The composite primary key (source_id, word_stem_id) found, that is not supported. The first column is selected.
-    word_stem = models.ForeignKey(WordStem, on_delete=models.CASCADE, db_column="word_stem_id")
+    source = models.ForeignKey(
+        Source, on_delete=models.CASCADE
+    )  # The composite primary key (source_id, word_stem_id) found, that is not supported. The first column is selected.
+    word_stem = models.ForeignKey(
+        WordStem, on_delete=models.CASCADE, db_column="word_stem_id"
+    )
 
     class Meta:
-        managed = False
-        db_table = 'word_stem_source'
-        unique_together = (('source', 'word_stem'),)
+        db_table = "word_stem_source"
+        unique_together = (("source", "word_stem"),)
