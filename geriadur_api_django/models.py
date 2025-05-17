@@ -70,9 +70,6 @@ class WordStem(models.Model):
     ref_words_eng = models.CharField(max_length=255, blank=True, null=True)
     ref_words_fr = models.CharField(max_length=255)
     source = models.ManyToManyField(Source, through="WordStemSource")
-    parent_stems = models.ManyToManyField(
-        "self", symmetrical=False, blank=True, related_name="child_stems_reverse"
-    )
     child_stems = models.ManyToManyField(
         "self", symmetrical=False, blank=True, related_name="parent_stems_reverse"
     )
