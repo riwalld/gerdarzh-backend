@@ -10,6 +10,46 @@ class SourceSerializer(serializers.ModelSerializer):
         fields = ["source_id", "abbreviation", "source_name_original"]
 
 
+class WordStemParentSerializer(serializers.ModelSerializer):
+    parent_stems_reverse = serializers.SerializerMethodField()
+
+    class Meta:
+        model = WordStem
+        fields = [
+            "word_stem_id",
+            "word_stem_name",
+            "word_stem_language",
+            "ref_words_fr",
+            "ref_words_fr",
+            "first_occurence",
+            "phonetic",
+            "parent_stems_reverse",
+        ]
+
+    def get_parent_stems_reverse(self, obj):
+        return WordStemParentSerializer(obj.parent_stems_reverse.all(), many=True).data
+
+
+class WordStemChildSerializer(serializers.ModelSerializer):
+    child_stems = serializers.SerializerMethodField()
+
+    class Meta:
+        model = WordStem
+        fields = [
+            "word_stem_id",
+            "word_stem_name",
+            "word_stem_language",
+            "ref_words_fr",
+            "ref_words_fr",
+            "first_occurence",
+            "phonetic",
+            "child_stems",
+        ]
+
+    def get_child_stems(self, obj):
+        return WordStemChildSerializer(obj.child_stems.all(), many=True).data
+
+
 class WordStemSerializer(serializers.Serializer):
     id = serializers.IntegerField(source="word_stem_id", required=False)
     wordStemName = serializers.CharField(source="word_stem_name")
@@ -22,20 +62,20 @@ class WordStemSerializer(serializers.Serializer):
     )
     firstOccurrence = serializers.IntegerField(source="first_occurence")
     gender = serializers.SerializerMethodField()
-    descrEng = serializers.CharField(
+    engDescription = serializers.CharField(
         source="descr_eng", allow_blank=True, required=False
     )
-    descrFr = serializers.CharField(source="descr_fr", allow_blank=True, required=False)
+    frDescription = serializers.CharField(
+        source="descr_fr", allow_blank=True, required=False
+    )
     phonetic = serializers.CharField(allow_blank=True, required=False)
     sources = serializers.PrimaryKeyRelatedField(
         source="source", queryset=Source.objects.all(), many=True
     )
-    parents = serializers.PrimaryKeyRelatedField(
-        source="parent_stems", queryset=WordStem.objects.all(), many=True
+    parents = WordStemParentSerializer(
+        source="parent_stems_reverse", many=True, read_only=True
     )
-    children = serializers.PrimaryKeyRelatedField(
-        source="child_stems", queryset=WordStem.objects.all(), many=True
-    )
+    children = WordStemChildSerializer(source="child_stems", many=True, read_only=True)
 
     def create(self, validated_data):
         print(validated_data)
