@@ -76,12 +76,24 @@ class WordStemSerializer(serializers.Serializer):
         source="parent_stems_reverse", many=True, read_only=True
     )
     children = WordStemChildSerializer(source="child_stems", many=True, read_only=True)
+    parents_ids = serializers.ListField(
+        child=serializers.IntegerField(), write_only=True, required=False
+    )
+    children_ids = serializers.ListField(
+        child=serializers.IntegerField(), write_only=True, required=False
+    )
 
     def create(self, validated_data):
-        print(validated_data)
-        source_ids = validated_data.pop("source")
+        source_ids = validated_data.pop("source", [])
+        parent_dicts = validated_data.pop("parents_ids", [])
+        children = validated_data.pop("children_ids", [])
         word_stem = WordStem.objects.create(**validated_data)
         word_stem.source.set(source_ids)
+        word_stem.child_stems.set(children)
+        for parent_id in parent_dicts:
+            parent = WordStem.objects.filter(word_stem_id=parent_id).first()
+            if parent:
+                parent.child_stems.add(word_stem)
         return word_stem
 
     def get_wordStemLanguage(self, obj):
