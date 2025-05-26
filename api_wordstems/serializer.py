@@ -52,7 +52,7 @@ class WordStemChildSerializer(serializers.ModelSerializer):
 
 class WordStemSerializer(serializers.Serializer):
     id = serializers.IntegerField(source="word_stem_id", required=False)
-    wordStemName = serializers.CharField(source="word_stem_name")
+    name = serializers.CharField(source="word_stem_name")
     wordStemLanguage = serializers.SerializerMethodField(source="word_stem_language")
     wordClass = serializers.SerializerMethodField(source="word_class")
     engTranslation = serializers.CharField(source="ref_words_eng")
