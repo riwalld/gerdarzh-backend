@@ -1,8 +1,9 @@
 from dataclasses import dataclass
 
+
 @dataclass
 class SourceDTO:
-    sourceId: int
+    id: int
     sourceOriginalName: str
-    sourceEngName: str
+    name: str
     sourceAbbreviation: str
