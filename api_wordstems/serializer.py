@@ -12,12 +12,14 @@ class SourceSerializer(serializers.ModelSerializer):
 
 class WordStemParentSerializer(serializers.ModelSerializer):
     parent_stems_reverse = serializers.SerializerMethodField()
+    name = serializers.CharField(source="word_stem_name")
+    word_stem_language = serializers.SerializerMethodField(source="word_stem_language")
 
     class Meta:
         model = WordStem
         fields = [
             "word_stem_id",
-            "word_stem_name",
+            "name",
             "word_stem_language",
             "ref_words_fr",
             "ref_words_fr",
@@ -26,18 +28,23 @@ class WordStemParentSerializer(serializers.ModelSerializer):
             "parent_stems_reverse",
         ]
 
+    def get_word_stem_language(self, obj):
+        return constants.LANGUAGE_CHOICES.get(obj.word_stem_language)
+
     def get_parent_stems_reverse(self, obj):
         return WordStemParentSerializer(obj.parent_stems_reverse.all(), many=True).data
 
 
 class WordStemChildSerializer(serializers.ModelSerializer):
     child_stems = serializers.SerializerMethodField()
+    name = serializers.CharField(source="word_stem_name")
+    word_stem_language = serializers.SerializerMethodField(source="word_stem_language")
 
     class Meta:
         model = WordStem
         fields = [
             "word_stem_id",
-            "word_stem_name",
+            "name",
             "word_stem_language",
             "ref_words_fr",
             "ref_words_fr",
@@ -45,6 +52,9 @@ class WordStemChildSerializer(serializers.ModelSerializer):
             "phonetic",
             "child_stems",
         ]
+
+    def get_word_stem_language(self, obj):
+        return constants.LANGUAGE_CHOICES.get(obj.word_stem_language)
 
     def get_child_stems(self, obj):
         return WordStemChildSerializer(obj.child_stems.all(), many=True).data
