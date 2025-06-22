@@ -36,7 +36,6 @@ class SemanticField(models.Model):
     sem_field_name_fr = models.CharField(max_length=255)
 
     class Meta:
-        managed = False
         db_table = "semantic_field"
 
 

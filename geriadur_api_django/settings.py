@@ -89,9 +89,9 @@ WSGI_APPLICATION = "geriadur_api_django.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": config("DBNAME"),
-        "USER": config("DBUSER"),
-        "PASSWORD": config("DBPASSWORD"),
+        "NAME": config("DBNAME", default="gerdarzh"),
+        "USER": config("DBUSER", default="postgres"),
+        "PASSWORD": config("DBPASSWORD", default="pass"),
         "HOST": config("DBHOST", default="localhost"),
         "PORT": config("DBPORT", default=5432),
     }
