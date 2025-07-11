@@ -34,9 +34,5 @@ RUN poetry config virtualenvs.create false \
 # Creating folders, and files for a project:
 COPY --chown=${UID:-33}:${GID:-33} . /app
 
-# Prod
-FROM build as prod
-COPY --chown=${UID:-33}:${GID:-33} ./start-prod-server.sh /usr/local/bin/start-prod-server.sh
-USER ${UID:-33}
-RUN chmod 777 /usr/local/bin/start-prod-server.sh
-CMD ["sh", "/usr/local/bin/start-prod-server.sh"]
+
+CMD ["python", "manage.py","runserver","0.0.0.0:8000"]
