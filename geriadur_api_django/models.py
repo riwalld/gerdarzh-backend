@@ -1,11 +1,37 @@
-# This is an auto-generated Django model module.
-# You'll have to do the following manually to clean this up:
-#   * Rearrange models' order
-#   * Make sure each model has one field with primary_key=True
-#   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
-#   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
-# Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
+
+
+class Language(models.Model):
+    language = models.CharField(max_length=100)
+    abbreviation = models.CharField(max_length=15)
+
+    class Meta:
+        db_table = "language"
+
+    def __str__(self):
+        return self.language
+
+
+class Wordclass(models.Model):
+    wordclass = models.CharField(max_length=100)
+    abbreviation = models.CharField(max_length=15)
+
+    class Meta:
+        db_table = "wordclass"
+
+    def __str__(self):
+        return self.wordclass
+
+
+class Gender(models.Model):
+    gender = models.CharField(max_length=100)
+    abbreviation = models.CharField(max_length=15)
+
+    class Meta:
+        db_table = "gender"
+
+    def __str__(self):
+        return self.gender
 
 
 class Author(models.Model):
@@ -19,6 +45,9 @@ class Author(models.Model):
     class Meta:
         db_table = "author"
 
+    def __str__(self):
+        return self.author_name
+
 
 class LitTrans(models.Model):
     lit_trans_type = models.IntegerField()
@@ -29,6 +58,9 @@ class LitTrans(models.Model):
     class Meta:
         db_table = "lit_trans"
 
+    def __str__(self):
+        return self.lit_trans_eng
+
 
 class SemanticField(models.Model):
     sem_field_id = models.BigAutoField(primary_key=True)
@@ -37,6 +69,9 @@ class SemanticField(models.Model):
 
     class Meta:
         db_table = "semantic_field"
+
+    def __str__(self):
+        return self.sem_field_name_eng
 
 
 class Source(models.Model):
@@ -52,11 +87,17 @@ class Source(models.Model):
     class Meta:
         db_table = "source"
 
+    def __str__(self):
+        return self.source_name_english
+
 
 class WordStem(models.Model):
     gender = models.IntegerField(blank=True, null=True)
     word_class = models.IntegerField(blank=True, null=True)
     word_stem_language = models.IntegerField()
+    language = models.ForeignKey(Language, models.DO_NOTHING, blank=True, null=True)
+    wordclass = models.ForeignKey(Wordclass, models.DO_NOTHING, blank=True, null=True)
+    w_gender = models.ForeignKey(Gender, models.DO_NOTHING, blank=True, null=True)
     word_stem_name = models.CharField(max_length=255)
     first_occurence = models.IntegerField()
     sem_field = models.ForeignKey(
@@ -75,6 +116,9 @@ class WordStem(models.Model):
 
     class Meta:
         db_table = "word_stem"
+
+    def __str__(self):
+        return f"{self.word_stem_name} ({self.word_stem_language})"
 
 
 class Propernoun(models.Model):
@@ -98,6 +142,9 @@ class Propernoun(models.Model):
 
     class Meta:
         db_table = "propernoun"
+
+    def __str__(self):
+        return self.current_name
 
 
 class Quote(models.Model):
@@ -165,11 +212,12 @@ class WordStemPropernoun(models.Model):
         db_table = "word_stem_propernoun"
         unique_together = (("word_stem_pc_key", "propernoun_id"),)
 
+    def __str__(self):
+        return f"{self.word_stem.word_stem_name} on place {self.word_stem_pc_key} for {self.propernoun.current_name}"
+
 
 class WordStemQuote(models.Model):
-    quote = models.OneToOneField(
-        Quote, models.DO_NOTHING, primary_key=True
-    )  # The composite primary key (quote_id, word_stem_id) found, that is not supported. The first column is selected.
+    quote = models.OneToOneField(Quote, models.DO_NOTHING, primary_key=True)
     word_stem = models.ForeignKey(WordStem, models.DO_NOTHING)
 
     class Meta:
@@ -178,9 +226,7 @@ class WordStemQuote(models.Model):
 
 
 class WordStemSource(models.Model):
-    source = models.ForeignKey(
-        Source, on_delete=models.CASCADE
-    )  # The composite primary key (source_id, word_stem_id) found, that is not supported. The first column is selected.
+    source = models.ForeignKey(Source, on_delete=models.CASCADE)
     word_stem = models.ForeignKey(
         WordStem, on_delete=models.CASCADE, db_column="word_stem_id"
     )
