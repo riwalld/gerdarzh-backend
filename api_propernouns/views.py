@@ -10,7 +10,7 @@ class ProperNounsViewSet(viewsets.ModelViewSet):
     serializer_class = PropernounSerializer
 
     def get_queryset(self):
-        propernouns = Propernoun.objects.all()
+        propernouns = Propernoun.objects.all().order_by("current_name")
         return propernouns
 
 
