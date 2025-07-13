@@ -1,3 +1,4 @@
+from django.contrib import admin
 from . import views
 from django.urls import path, include
 from api_propernouns.views import (
@@ -10,7 +11,8 @@ router = DefaultRouter()
 router.register(r"properNouns", ProperNounsViewSet, basename="propernouns")
 
 urlpatterns = [
-    path("admin", views.home),
+    path("home", views.home),
+    path("admin/", admin.site.urls),
     path("api/", include(router.urls)),
     path(
         "api/properNouns/by-name/<str:name>/",
