@@ -33,6 +33,14 @@ ALLOWED_HOSTS = ["localhost", "127.0.0.1", "gerdarzh.eu"]
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 # Application definition
 
+ADMIN_URL = "api/cms/"
+JAZZMIN_SETTINGS = {
+    "site_title": "Gerdarzh",
+    "site_header": "Gerdarzh",
+    "site_brand": "Gerdarzh",
+    "copyright": "Benjamin Dufeu",
+}
+
 INSTALLED_APPS = [
     "jazzmin",
     "django.contrib.admin",
