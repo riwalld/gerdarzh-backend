@@ -3,9 +3,9 @@ from rest_framework import serializers
 from geriadur_api_django.models import Propernoun, LitTrans, WordStem, WordStemPropernoun
 
 class LitTransSerializer(serializers.Serializer):
-    litTransFr = serializers.CharField(source="lit_trans_fr")
-    litTransEng = serializers.CharField(source="lit_trans_eng",allow_blank=True, required=False)
-    litTransType = serializers.IntegerField(source="lit_trans_type")
+    litTransFr = serializers.CharField(source="name_fr")
+    litTransEng = serializers.CharField(source="name_eng",allow_blank=True, required=False)
+    litTransType = serializers.IntegerField(source="type")
 
 class PropernounSerializer(serializers.Serializer):
     litTrans = LitTransSerializer(source='lit_trans')  # Nested serializer for the related LitTrans model

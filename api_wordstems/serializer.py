@@ -65,7 +65,7 @@ class WordStemSerializer(serializers.Serializer):
     name = serializers.CharField(source="word_stem_name")
     wordStemLanguage = serializers.SerializerMethodField(source="word_stem_language")
     wordClass = serializers.SerializerMethodField(source="word_class")
-    engTranslation = serializers.CharField(source="ref_words_eng")
+    engTranslation = serializers.CharField(source="translation")
     frTranslation = serializers.CharField(source="ref_words_fr")
     semanticField = serializers.PrimaryKeyRelatedField(
         source="sem_field", queryset=SemanticField.objects.all()
