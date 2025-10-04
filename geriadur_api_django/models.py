@@ -1,26 +1,87 @@
 from django.db import models
+from django.contrib.contenttypes.models import ContentType
 
 
 class Language(models.Model):
-    language = models.CharField(max_length=100)
+    name = models.CharField(max_length=100)
     abbreviation = models.CharField(max_length=15)
+
+    def get_name(self, lang_code):
+        content_type = ContentType.objects.get_for_model(self.__class__)
+        try:
+            return Translation.objects.get(
+                entity_type=content_type,
+                entity_id=self.pk,
+                field="name",
+                language=lang_code,
+            ).value
+        except Translation.DoesNotExist:
+            return None
 
     class Meta:
         db_table = "language"
 
     def __str__(self):
-        return self.language
+        return self.name
+
+
+class EntityField(models.Model):
+    entity_type = models.ForeignKey(ContentType, models.DO_NOTHING)
+    field_name = models.CharField(max_length=50)
+
+    class Meta:
+        unique_together = ("entity_type", "field_name")
+
+
+class Translation(models.Model):
+    entity_type = models.ForeignKey(ContentType, models.DO_NOTHING)
+    entity_id = models.PositiveIntegerField()
+    field = models.ForeignKey(EntityField, models.DO_NOTHING)
+    language = models.ForeignKey(Language, models.DO_NOTHING)
+    value = models.TextField()
+
+    class Meta:
+        unique_together = ("entity_type", "entity_id", "field", "language")
+        indexes = [
+            models.Index(fields=["entity_type", "entity_id", "field", "language"]),
+        ]
+
+    def __str__(self):
+        return f"field '{self.field.field_name}' from the table '{self.entity_type.model}' = {self.value}"
+
+
+class Country(models.Model):
+    name = models.CharField(max_length=255, blank=True)
+
+    def __str__(self):
+        return self.name
+
+
+class Place(models.Model):
+    country = models.ForeignKey(Country, models.DO_NOTHING)
+    name = models.CharField(max_length=255, blank=True)
+
+    def __str__(self):
+        return self.name
+
+
+class Period(models.Model):
+    country = models.ForeignKey(Country, models.DO_NOTHING)
+    name = models.CharField(max_length=255, blank=True)
+
+    def __str__(self):
+        return self.name
 
 
 class Wordclass(models.Model):
-    wordclass = models.CharField(max_length=100)
+    name = models.CharField(max_length=100)
     abbreviation = models.CharField(max_length=15)
 
     class Meta:
         db_table = "wordclass"
 
     def __str__(self):
-        return self.wordclass
+        return self.name
 
 
 class Gender(models.Model):
@@ -35,11 +96,10 @@ class Gender(models.Model):
 
 
 class Author(models.Model):
-    author_birthdate = models.DateTimeField(blank=True, null=True)
-    author_deathdate = models.DateTimeField(blank=True, null=True)
-    author_id = models.BigAutoField(primary_key=True)
-    author_name = models.CharField(max_length=255)
-    author_nationality = models.CharField(max_length=255)
+    birthdate = models.DateTimeField(blank=True, null=True)
+    deathdate = models.DateTimeField(blank=True, null=True)
+    id = models.BigAutoField(primary_key=True)
+    name = models.CharField(max_length=255)
     biography = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
@@ -50,45 +110,51 @@ class Author(models.Model):
 
 
 class LitTrans(models.Model):
-    lit_trans_type = models.IntegerField()
-    lit_trans_id = models.BigAutoField(primary_key=True)
-    lit_trans_eng = models.CharField(max_length=255, blank=True, null=True)
-    lit_trans_fr = models.CharField(max_length=255)
+    type = models.IntegerField()
+    id = models.BigAutoField(primary_key=True)
+    name_eng = models.CharField(max_length=255, blank=True, null=True)
+    name_fr = models.CharField(max_length=255)
 
     class Meta:
         db_table = "lit_trans"
 
     def __str__(self):
-        return self.lit_trans_eng
+        return self.name_eng
 
 
 class SemanticField(models.Model):
     sem_field_id = models.BigAutoField(primary_key=True)
-    sem_field_name_eng = models.CharField(max_length=255)
-    sem_field_name_fr = models.CharField(max_length=255)
+    name_eng = models.CharField(max_length=255)
+    name_fr = models.CharField(max_length=255)
 
     class Meta:
         db_table = "semantic_field"
 
     def __str__(self):
-        return self.sem_field_name_eng
+        return self.name_eng
 
 
 class Source(models.Model):
-    date_publication = models.IntegerField()
+    edition_date = models.IntegerField()
     language = models.IntegerField()
-    type_source = models.IntegerField()
+    writing_language = models.ForeignKey(
+        Language, models.DO_NOTHING, related_name="sources_as_writing"
+    )
+    studied_language = models.ForeignKey(
+        Language, models.DO_NOTHING, related_name="sources_as_studied"
+    )
+    type = models.IntegerField()
     source_id = models.BigAutoField(primary_key=True)
     abbreviation = models.CharField(max_length=255)
-    source_name_english = models.CharField(max_length=255)
-    source_name_original = models.CharField(max_length=255, blank=True, null=True)
+    title = models.CharField(max_length=255)
+    orig_title = models.CharField(max_length=255, blank=True, null=True)
     description = models.TextField(blank=True, null=True)
 
     class Meta:
         db_table = "source"
 
     def __str__(self):
-        return self.source_name_english
+        return self.title
 
 
 class WordStem(models.Model):
@@ -107,7 +173,9 @@ class WordStem(models.Model):
     descr_eng = models.CharField(max_length=255, blank=True, null=True)
     descr_fr = models.CharField(max_length=255, blank=True, null=True)
     phonetic = models.CharField(max_length=255, blank=True, null=True)
-    ref_words_eng = models.CharField(max_length=255, blank=True, null=True)
+    fr_translations = models.ManyToManyField(Translation,related_name='fr_wordstems')
+    eng_translations = models.ManyToManyField(Translation,related_name='eng_wordstems')
+    translation = models.CharField(max_length=255, blank=True, null=True)
     ref_words_fr = models.CharField(max_length=255)
     source = models.ManyToManyField(Source, through="WordStemSource")
     child_stems = models.ManyToManyField(
@@ -118,7 +186,7 @@ class WordStem(models.Model):
         db_table = "word_stem"
 
     def __str__(self):
-        return f"{self.word_stem_name} ({self.word_stem_language})"
+        return self.word_stem_name
 
 
 class Propernoun(models.Model):
@@ -132,9 +200,9 @@ class Propernoun(models.Model):
     period = models.CharField(max_length=45, blank=True, null=True)
     place = models.CharField(max_length=45, blank=True, null=True)
     country = models.CharField(max_length=45, blank=True, null=True)
-    short_descr_eng = models.CharField(max_length=150, blank=True, null=True)
+    short_descr = models.CharField(max_length=150, blank=True, null=True)
     short_descr_fr = models.CharField(max_length=150, blank=True, null=True)
-    descr_eng = models.CharField(max_length=3000, blank=True, null=True)
+    description = models.CharField(max_length=3000, blank=True, null=True)
     descr_fr = models.CharField(max_length=3000, blank=True, null=True)
     image = models.TextField(blank=True, null=True)
     confirmed = models.IntegerField(blank=True, null=True)
@@ -169,6 +237,9 @@ class SourceAuthor(models.Model):
 
 class User(models.Model):
     language = models.IntegerField()
+    choosen_language = models.ForeignKey(
+        Language, models.DO_NOTHING, blank=True, null=True
+    )
     score_h_figures = models.IntegerField()
     score_m_figures = models.IntegerField()
     score_objects = models.IntegerField()
@@ -202,9 +273,7 @@ class WordStemParent(models.Model):
 
 
 class WordStemPropernoun(models.Model):
-    word_stem_pc_key = models.IntegerField(
-        primary_key=True
-    )  # The composite primary key (word_stem_pc_key, propernoun_id) found, that is not supported. The first column is selected.
+    word_stem_pc_key = models.IntegerField(primary_key=True)
     propernoun = models.ForeignKey(Propernoun, on_delete=models.CASCADE)
     word_stem = models.ForeignKey(WordStem, on_delete=models.CASCADE)
 
@@ -213,7 +282,7 @@ class WordStemPropernoun(models.Model):
         unique_together = (("word_stem_pc_key", "propernoun_id"),)
 
     def __str__(self):
-        return f"{self.word_stem.word_stem_name} on place {self.word_stem_pc_key} for {self.propernoun.current_name}"
+        return self.word_stem.word_stem_name
 
 
 class WordStemQuote(models.Model):
