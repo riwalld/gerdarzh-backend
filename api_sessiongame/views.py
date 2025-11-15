@@ -1,12 +1,10 @@
 
 from random import sample, shuffle
-from django.http import HttpResponse
-from geriadur_api_django.models import Propernoun, WordStem, LitTrans
+from geriadur_api_django.models import Propernoun, LitTrans
 from .dto import GameSessionStepDto, PCelticRadicalDto, ProperNameDto
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from dataclasses import asdict
-from geriadur_api_django.constants import GenderEnum, WordClassEnum, LanguageEnum
 
 @api_view(['GET'])
 def getSessionGameData(request):

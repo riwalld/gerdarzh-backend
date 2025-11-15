@@ -1,28 +1,24 @@
 from django.contrib import admin
 
 from geriadur_api_django.settings import ADMIN_URL
-from . import views
 from django.urls import path, include
-from api_propernouns.views import (
-    GetOneProperNounByNameView,
-    ProperNounsViewSet,
-)
+from .views import  GetOneProperNounByNameView, WordstemsViewSet, PropernousAPIView, SourcesAPIView, SemanticFieldsAPIView
+
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
-router.register(r"properNouns", ProperNounsViewSet, basename="propernouns")
+router.register("wordstems", WordstemsViewSet, basename="wordstems")
 
 urlpatterns = [
     path(ADMIN_URL, admin.site.urls),
-    path("home", views.home),
-    path("api/", include(router.urls)),
+        path("api/", include(router.urls)),
     path(
         "api/properNouns/by-name/<str:name>/",
         GetOneProperNounByNameView.as_view(),
         name="propernoun-by-name",
     ),
-    path("api/wordstems/", include("api_wordstems.urls")),
+    path("api/properNouns/", PropernousAPIView.as_view()),
     path("api/sessionGameData/", include("api_sessiongame.urls")),
-    path("api/sources/", include("api_sources.urls")),
-    path("api/semanticFields/", include("api_semanticfield.urls")),
+    path("api/sources/", SourcesAPIView.as_view()),
+    path("api/semanticFields/", SemanticFieldsAPIView.as_view()),
 ]
