@@ -26,7 +26,7 @@ from geriadur_api_django import constants
 class PropernousAPIView(APIView):
     def get(self, request):
         queryset = Propernoun.objects.all().order_by("current_name")
-        serializer = SemanticFieldSerializer(queryset, many=True)
+        serializer = PropernounSerializer(queryset, many=True)
         return Response(serializer.data)
 
 class GetOneProperNounByNameView(APIView):

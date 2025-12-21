@@ -56,11 +56,13 @@ class PropernounSerializer(serializers.Serializer):
         return instance
 
     
-class SemanticFieldSerializer(serializers.Serializer):
+class SemanticFieldSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(source="sem_field_id",required=False)
     engName = serializers.CharField(source="name_eng")
     frName = serializers.CharField(source="name_fr")
-    
+    class Meta:
+        model = SemanticField
+        fields = ["id", "engName", "frName"]
     
 
 class SourceSerializer(serializers.ModelSerializer):
