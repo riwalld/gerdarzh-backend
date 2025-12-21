@@ -1,37 +1,51 @@
-
 from rest_framework import serializers
-from geriadur_api_django.models import Propernoun, LitTrans, WordStem, WordStemPropernoun
+from geriadur_api_django.models import (
+    Propernoun,
+    LitTrans,
+    WordStem,
+    WordStemPropernoun,
+)
 from geriadur_api_django.models import SemanticField, Source, WordStem
 from rest_framework import serializers
 from geriadur_api_django import constants
 
+
 class LitTransSerializer(serializers.Serializer):
     litTransFr = serializers.CharField(source="name_fr")
-    litTransEng = serializers.CharField(source="name_eng",allow_blank=True, required=False)
+    litTransEng = serializers.CharField(
+        source="name_eng", allow_blank=True, required=False
+    )
     litTransType = serializers.IntegerField(source="type")
 
+
 class PropernounSerializer(serializers.Serializer):
-    litTrans = LitTransSerializer(source='lit_trans')  # Nested serializer for the related LitTrans model
+    litTrans = LitTransSerializer(
+        source="lit_trans"
+    )  # Nested serializer for the related LitTrans model
     currentName = serializers.CharField(source="current_name")
     etymoName = serializers.CharField(source="etymo_name")
     wordStemsPC = serializers.ListField(
-        child=serializers.PrimaryKeyRelatedField(queryset=WordStem.objects.all()), 
-        write_only=True
+        child=serializers.PrimaryKeyRelatedField(queryset=WordStem.objects.all()),
+        write_only=True,
     )
-    descrFr= serializers.CharField(source="descr_fr", allow_blank=True,required=False)
-    descrEng = serializers.CharField(source="descr_eng", allow_blank=True,required=False)
+    descrFr = serializers.CharField(source="descr_fr", allow_blank=True, required=False)
+    descrEng = serializers.CharField(
+        source="descr_eng", allow_blank=True, required=False
+    )
     wordTheme = serializers.IntegerField(source="word_theme")
     culturalArea = serializers.IntegerField(source="cultural_area")
-    place = serializers.CharField(allow_blank=True,required=False)
-    country = serializers.CharField(allow_blank=True,required=False)
-    period = serializers.CharField(allow_blank=True,required=False)
+    place = serializers.CharField(allow_blank=True, required=False)
+    country = serializers.CharField(allow_blank=True, required=False)
+    period = serializers.CharField(allow_blank=True, required=False)
     year = serializers.IntegerField(required=False)
-    image = serializers.CharField(allow_blank=True,required=False)
-    imgCaption= serializers.CharField(source="img_caption", allow_blank=True,required=False)
+    image = serializers.CharField(allow_blank=True, required=False)
+    imgCaption = serializers.CharField(
+        source="img_caption", allow_blank=True, required=False
+    )
 
     def create(self, validated_data):
-        lit_trans_data = validated_data.pop('lit_trans')
-        wordstems_data = validated_data.pop('wordStemsPC')
+        lit_trans_data = validated_data.pop("lit_trans")
+        wordstems_data = validated_data.pop("wordStemsPC")
         print(wordstems_data)
 
         # Create the LitTrans instance
@@ -39,31 +53,42 @@ class PropernounSerializer(serializers.Serializer):
 
         # Create the Propernoun instance with the lit_trans instance
         pn = Propernoun.objects.create(lit_trans=lit_trans_instance, **validated_data)
-        
-        i=0
+
+        i = 0
         for ws in wordstems_data:
-            print("Creating WordStemPropernoun with word_stem_id:", ws.pk, "and propernoun_id:", pn.pk, "at the place ", i, "of the name")
-            WordStemPropernoun.objects.create(propernoun=pn, word_stem=ws, word_stem_pc_key=i)
+            print(
+                "Creating WordStemPropernoun with word_stem_id:",
+                ws.pk,
+                "and propernoun_id:",
+                pn.pk,
+                "at the place ",
+                i,
+                "of the name",
+            )
+            WordStemPropernoun.objects.create(
+                propernoun=pn, word_stem=ws, word_stem_pc_key=i
+            )
             i += 1
-            
+
         return pn
 
     def update(self, instance, validated_data):
-        lit_trans_data = validated_data.pop('lit_trans', None)
+        lit_trans_data = validated_data.pop("lit_trans", None)
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         instance.save()
         return instance
 
-    
+
 class SemanticFieldSerializer(serializers.ModelSerializer):
-    id = serializers.IntegerField(source="sem_field_id",required=False)
+    id = serializers.IntegerField(source="sem_field_id", required=False)
     engName = serializers.CharField(source="name_eng")
     frName = serializers.CharField(source="name_fr")
+
     class Meta:
         model = SemanticField
         fields = ["id", "engName", "frName"]
-    
+
 
 class SourceSerializer(serializers.ModelSerializer):
     class Meta:
@@ -119,6 +144,20 @@ class WordStemChildSerializer(serializers.ModelSerializer):
 
     def get_child_stems(self, obj):
         return WordStemChildSerializer(obj.child_stems.all(), many=True).data
+
+
+class MiniWordStemSerializer(serializers.Serializer):
+    id = serializers.IntegerField(source="word_stem_id")
+    name = serializers.CharField(source="word_stem_name")
+    lang = serializers.CharField(source="word_stem_language")
+
+    class Meta:
+        model = WordStem
+        fields = [
+            "word_stem_id",
+            "name",
+            "lang",
+        ]
 
 
 class WordStemSerializer(serializers.Serializer):

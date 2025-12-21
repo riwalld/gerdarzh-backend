@@ -2,16 +2,22 @@ from django.contrib import admin
 
 from geriadur_api_django.settings import ADMIN_URL
 from django.urls import path, include
-from .views import  GetOneProperNounByNameView, WordstemsViewSet, PropernousAPIView, SourcesAPIView, SemanticFieldsAPIView
+from .views import (
+    GetOneProperNounByNameView,
+    WordstemAPIView,
+    PropernousAPIView,
+    SourcesAPIView,
+    SemanticFieldsAPIView,
+    WordstemStrSetAPIView,
+)
 
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
-router.register("wordstems", WordstemsViewSet, basename="wordstems")
 
 urlpatterns = [
     path(ADMIN_URL, admin.site.urls),
-        path("api/", include(router.urls)),
+    path("api/", include(router.urls)),
     path(
         "api/properNouns/by-name/<str:name>/",
         GetOneProperNounByNameView.as_view(),
@@ -21,4 +27,6 @@ urlpatterns = [
     path("api/sessionGameData/", include("api_sessiongame.urls")),
     path("api/sources/", SourcesAPIView.as_view()),
     path("api/semanticFields/", SemanticFieldsAPIView.as_view()),
+    path("api/wordstems/<str:order>/", WordstemAPIView.as_view()),
+    path("api/wordstemstrset/", WordstemStrSetAPIView.as_view()),
 ]
