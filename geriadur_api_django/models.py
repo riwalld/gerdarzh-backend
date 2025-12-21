@@ -34,10 +34,10 @@ class EntityField(models.Model):
 
 
 class Translation(models.Model):
-    entity_type = models.ForeignKey(ContentType, models.DO_NOTHING)
+    entity_type = models.ForeignKey(ContentType, models.SET_NULL, null=True)
     entity_id = models.PositiveIntegerField()
-    field = models.ForeignKey(EntityField, models.DO_NOTHING)
-    language = models.ForeignKey(Language, models.DO_NOTHING)
+    field = models.ForeignKey(EntityField, models.SET_NULL, null=True)
+    language = models.ForeignKey(Language, models.PROTECT)
     value = models.TextField()
 
     class Meta:
@@ -138,10 +138,10 @@ class Source(models.Model):
     edition_date = models.IntegerField()
     language = models.IntegerField()
     writing_language = models.ForeignKey(
-        Language, models.DO_NOTHING, related_name="sources_as_writing"
+        Language, models.PROTECT, related_name="sources_as_writing"
     )
     studied_language = models.ForeignKey(
-        Language, models.DO_NOTHING, related_name="sources_as_studied"
+        Language, models.PROTECT, related_name="sources_as_studied"
     )
     type = models.IntegerField()
     source_id = models.BigAutoField(primary_key=True)
@@ -161,13 +161,13 @@ class WordStem(models.Model):
     gender = models.IntegerField(blank=True, null=True)
     word_class = models.IntegerField(blank=True, null=True)
     word_stem_language = models.IntegerField()
-    language = models.ForeignKey(Language, models.DO_NOTHING, blank=True, null=True)
-    wordclass = models.ForeignKey(Wordclass, models.DO_NOTHING, blank=True, null=True)
-    w_gender = models.ForeignKey(Gender, models.DO_NOTHING, blank=True, null=True)
+    language = models.ForeignKey(Language, models.PROTECT, blank=True, null=True)
+    wordclass = models.ForeignKey(Wordclass, models.PROTECT, blank=True, null=True)
+    w_gender = models.ForeignKey(Gender, models.PROTECT, blank=True, null=True)
     word_stem_name = models.CharField(max_length=255)
     first_occurence = models.IntegerField()
     sem_field = models.ForeignKey(
-        SemanticField, models.DO_NOTHING, blank=True, null=True
+        SemanticField, models.SET_NULL, blank=True, null=True
     )
     word_stem_id = models.BigAutoField(primary_key=True)
     descr_eng = models.CharField(max_length=255, blank=True, null=True)
@@ -217,7 +217,7 @@ class Propernoun(models.Model):
 
 class Quote(models.Model):
     quote_id = models.BigAutoField(primary_key=True)
-    source = models.ForeignKey("Source", models.DO_NOTHING, blank=True, null=True)
+    source = models.ForeignKey("Source", models.SET_NULL, blank=True, null=True)
     quote_text = models.CharField(max_length=255)
 
     class Meta:
