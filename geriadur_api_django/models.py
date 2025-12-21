@@ -158,23 +158,21 @@ class Source(models.Model):
 
 
 class WordStem(models.Model):
+    word_stem_id = models.BigAutoField(primary_key=True)
+    word_stem_name = models.CharField(max_length=255)
+    fr_translations = models.ManyToManyField(Translation, related_name="fr_wordstems")
+    eng_translations = models.ManyToManyField(Translation, related_name="eng_wordstems")
     gender = models.IntegerField(blank=True, null=True)
     word_class = models.IntegerField(blank=True, null=True)
     word_stem_language = models.IntegerField()
     language = models.ForeignKey(Language, models.PROTECT, blank=True, null=True)
     wordclass = models.ForeignKey(Wordclass, models.PROTECT, blank=True, null=True)
     w_gender = models.ForeignKey(Gender, models.PROTECT, blank=True, null=True)
-    word_stem_name = models.CharField(max_length=255)
     first_occurence = models.IntegerField()
-    sem_field = models.ForeignKey(
-        SemanticField, models.SET_NULL, blank=True, null=True
-    )
-    word_stem_id = models.BigAutoField(primary_key=True)
+    sem_field = models.ForeignKey(SemanticField, models.SET_NULL, blank=True, null=True)
     descr_eng = models.CharField(max_length=255, blank=True, null=True)
     descr_fr = models.CharField(max_length=255, blank=True, null=True)
     phonetic = models.CharField(max_length=255, blank=True, null=True)
-    fr_translations = models.ManyToManyField(Translation,related_name='fr_wordstems')
-    eng_translations = models.ManyToManyField(Translation,related_name='eng_wordstems')
     translation = models.CharField(max_length=255, blank=True, null=True)
     ref_words_fr = models.CharField(max_length=255)
     source = models.ManyToManyField(Source, through="WordStemSource")
