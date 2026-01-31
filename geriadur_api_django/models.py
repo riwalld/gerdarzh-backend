@@ -112,6 +112,7 @@ class Author(models.Model):
 class LitTrans(models.Model):
     type = models.IntegerField()
     id = models.BigAutoField(primary_key=True)
+    name_br = models.CharField(max_length=255, blank=True, null=True)
     name_eng = models.CharField(max_length=255, blank=True, null=True)
     name_fr = models.CharField(max_length=255)
 
