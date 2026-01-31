@@ -15,8 +15,23 @@ class LitTransSerializer(serializers.Serializer):
     litTransEng = serializers.CharField(
         source="name_eng", allow_blank=True, required=False
     )
+    litTransBr = serializers.CharField(
+        source="name_br", allow_blank=True, required=False
+    )
     litTransType = serializers.IntegerField(source="type")
 
+class MiniWordStemSerializer(serializers.Serializer):
+    id = serializers.IntegerField(source="word_stem_id")
+    name = serializers.CharField(source="word_stem_name")
+    lang = serializers.CharField(source="word_stem_language")
+
+    class Meta:
+        model = WordStem
+        fields = [
+            "word_stem_id",
+            "name",
+            "lang",
+        ]
 
 class PropernounSerializer(serializers.Serializer):
     litTrans = LitTransSerializer(
@@ -24,10 +39,7 @@ class PropernounSerializer(serializers.Serializer):
     )  # Nested serializer for the related LitTrans model
     currentName = serializers.CharField(source="current_name")
     etymoName = serializers.CharField(source="etymo_name")
-    wordStemsPC = serializers.ListField(
-        child=serializers.PrimaryKeyRelatedField(queryset=WordStem.objects.all()),
-        write_only=True,
-    )
+    wordStemsPC = serializers.SerializerMethodField()
     descrFr = serializers.CharField(source="descr_fr", allow_blank=True, required=False)
     descrEng = serializers.CharField(
         source="descr_eng", allow_blank=True, required=False
@@ -42,11 +54,17 @@ class PropernounSerializer(serializers.Serializer):
     imgCaption = serializers.CharField(
         source="img_caption", allow_blank=True, required=False
     )
-
+    
+    def get_wordStemsPC(self, obj):
+            relations = WordStemPropernoun.objects.filter(propernoun=obj).order_by("word_stem_pc_key")
+            return MiniWordStemSerializer(
+                [rel.word_stem for rel in relations],
+                many=True
+            ).data
+            
     def create(self, validated_data):
         lit_trans_data = validated_data.pop("lit_trans")
         wordstems_data = validated_data.pop("wordStemsPC")
-        print(wordstems_data)
 
         # Create the LitTrans instance
         lit_trans_instance = LitTrans.objects.create(**lit_trans_data)
@@ -144,20 +162,6 @@ class WordStemChildSerializer(serializers.ModelSerializer):
 
     def get_child_stems(self, obj):
         return WordStemChildSerializer(obj.child_stems.all(), many=True).data
-
-
-class MiniWordStemSerializer(serializers.Serializer):
-    id = serializers.IntegerField(source="word_stem_id")
-    name = serializers.CharField(source="word_stem_name")
-    lang = serializers.CharField(source="word_stem_language")
-
-    class Meta:
-        model = WordStem
-        fields = [
-            "word_stem_id",
-            "name",
-            "lang",
-        ]
 
 
 class WordStemSerializer(serializers.Serializer):
