@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from geriadur_api_django.models import (
+    Language,
+    LanguageTranslation,
     Propernoun,
     LitTrans,
     WordStem,
@@ -24,6 +26,7 @@ class MiniWordStemSerializer(serializers.Serializer):
     id = serializers.IntegerField(source="word_stem_id")
     name = serializers.CharField(source="word_stem_name")
     lang = serializers.CharField(source="word_stem_language")
+    fr = serializers.CharField(source="ref_words_fr")
 
     class Meta:
         model = WordStem
@@ -31,6 +34,7 @@ class MiniWordStemSerializer(serializers.Serializer):
             "word_stem_id",
             "name",
             "lang",
+            "ref_words_fr"
         ]
 
 class PropernounSerializer(serializers.Serializer):
@@ -42,7 +46,7 @@ class PropernounSerializer(serializers.Serializer):
     wordStemsPC = serializers.SerializerMethodField()
     descrFr = serializers.CharField(source="descr_fr", allow_blank=True, required=False)
     descrEng = serializers.CharField(
-        source="descr_eng", allow_blank=True, required=False
+        source="short_descr", allow_blank=True, required=False
     )
     wordTheme = serializers.IntegerField(source="word_theme")
     culturalArea = serializers.IntegerField(source="cultural_area")
@@ -242,3 +246,13 @@ class WordStemSerializer(serializers.Serializer):
             constants.WORDCLASS_CHOICES, wordClass_name
         )
         return data
+
+class LanguageTranslationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LanguageTranslation
+        fields = ('lang', 'name', 'abbr')
+        
+class LanguageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Language
+        fields = ('code', 'translations')

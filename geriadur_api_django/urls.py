@@ -4,6 +4,7 @@ from geriadur_api_django.settings import ADMIN_URL
 from django.urls import path, include
 from .views import (
     GetOneProperNounByNameView,
+    LanguageSetAPIView,
     WordstemAPIView,
     PropernousAPIView,
     SourcesAPIView,
@@ -29,4 +30,5 @@ urlpatterns = [
     path("api/semanticFields/", SemanticFieldsAPIView.as_view()),
     path("api/wordstems/<str:order>/", WordstemAPIView.as_view()),
     path("api/wordstemstrset/", WordstemStrSetAPIView.as_view()),
+    path("api/languages/", LanguageSetAPIView.as_view()),
 ]

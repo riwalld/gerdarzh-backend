@@ -1,9 +1,10 @@
 from rest_framework.response import Response
 from geriadur_api_django.dto import SourceDTO
-from geriadur_api_django.models import Propernoun
+from geriadur_api_django.models import Language, Propernoun
 from rest_framework import viewsets, status
 from rest_framework.views import APIView
 from .serializer import (
+    LanguageSerializer,
     MiniWordStemSerializer,
     SemanticFieldSerializer,
     PropernounSerializer,
@@ -82,7 +83,12 @@ class WordstemStrSetAPIView(APIView):
         serializer = MiniWordStemSerializer(wordstems, many=True)
         return Response(serializer.data)
 
-
+class LanguageSetAPIView(APIView):
+    def get(self, request):
+        languages = Language.objects.all()
+        serializer = LanguageSerializer(languages, many=True)
+        return Response(serializer.data)
+    
 class ProtoCelticStrAPIView(APIView):
     def get(self, request):
         pcRadicals = WordStem.objects.all()
