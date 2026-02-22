@@ -4,25 +4,27 @@ from django.contrib.contenttypes.models import ContentType
 
 class Language(models.Model):
     name = models.CharField(max_length=100)
-    abbreviation = models.CharField(max_length=15)
-
-    def get_name(self, lang_code):
-        content_type = ContentType.objects.get_for_model(self.__class__)
-        try:
-            return Translation.objects.get(
-                entity_type=content_type,
-                entity_id=self.pk,
-                field="name",
-                language=lang_code,
-            ).value
-        except Translation.DoesNotExist:
-            return None
+    code = models.CharField(max_length=10, unique=True, null=True)
 
     class Meta:
         db_table = "language"
 
     def __str__(self):
-        return self.name
+        translation = self.translations.filter(lang='en').first()
+        return translation.name if translation else self.code
+    
+class LanguageTranslation(models.Model):
+    language = models.ForeignKey(Language, related_name='translations', on_delete=models.CASCADE)
+    lang = models.CharField(max_length=2)
+    name = models.CharField(max_length=100)
+    abbr = models.CharField(max_length=15)
+
+    class Meta:
+        unique_together = ('language', 'lang')
+        db_table = "language_translation"
+
+    def __str__(self):
+        return f"{self.name} ({self.lang})"
 
 
 class EntityField(models.Model):
