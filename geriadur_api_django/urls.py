@@ -6,6 +6,7 @@ from .views import (
     GetOneProperNounByNameView,
     LanguageSetAPIView,
     WordstemAPIView,
+    WordstemListAPIView,
     PropernousAPIView,
     SourcesAPIView,
     SemanticFieldsAPIView,
@@ -28,7 +29,8 @@ urlpatterns = [
     path("api/sessionGameData/", include("api_sessiongame.urls")),
     path("api/sources/", SourcesAPIView.as_view()),
     path("api/semanticFields/", SemanticFieldsAPIView.as_view()),
-    path("api/wordstems/<str:order>/", WordstemAPIView.as_view()),
+    path("api/wordstemList/<str:order>/", WordstemListAPIView.as_view()),
+    path("api/wordstem/<int:id>/", WordstemAPIView.as_view()),
     path("api/wordstemstrset/", WordstemStrSetAPIView.as_view()),
     path("api/languages/", LanguageSetAPIView.as_view()),
 ]

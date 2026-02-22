@@ -57,9 +57,14 @@ class EpisodePagination(PageNumberPagination):
     page_size = 10
     page_size_query_param = "page_size"
     max_page_size = 50
-
-
+    
 class WordstemAPIView(APIView):
+    def get(self, request, id):
+        wordstems = WordStem.objects.filter(word_stem_id=id).first()
+        serializer = WordStemSerializer(wordstems)
+        return Response(serializer.data)
+
+class WordstemListAPIView(APIView):
     def get(self, request, order):
         wordstems = WordStem.objects.all()
         match order:
