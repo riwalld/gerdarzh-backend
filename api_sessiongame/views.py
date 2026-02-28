@@ -27,17 +27,17 @@ def getSessionGameData(request):
 
 def get_5_response_choices(good_lit_trans):
     selected_lit_trans = []
-    selected_lit_trans.append({'responseChoice': good_lit_trans.lit_trans_fr, 'correctness': True})
+    selected_lit_trans.append({'responseChoice': good_lit_trans.name_fr, 'correctness': True})
 
-    all_literal_translations = LitTrans.objects.filter(lit_trans_type=good_lit_trans.lit_trans_type)
+    all_literal_translations = LitTrans.objects.filter(type=good_lit_trans.type)
 
     # Shuffle the list of literal translations
     all_literal_translations = list(all_literal_translations)
     shuffle(all_literal_translations)
 
     for literal_trans in all_literal_translations:
-        if literal_trans.lit_trans_fr != good_lit_trans.lit_trans_fr:
-            selected_lit_trans.append({'responseChoice': literal_trans.lit_trans_fr, 'correctness': False})
+        if literal_trans.name_fr != good_lit_trans.name_fr:
+            selected_lit_trans.append({'responseChoice': literal_trans.name_fr, 'correctness': False})
         if len(selected_lit_trans) == 5:
             break
 
