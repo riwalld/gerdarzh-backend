@@ -35,21 +35,12 @@ class EntityField(models.Model):
         unique_together = ("entity_type", "field_name")
 
 
-class Translation(models.Model):
-    entity_type = models.ForeignKey(ContentType, models.SET_NULL, null=True)
-    entity_id = models.PositiveIntegerField()
-    field = models.ForeignKey(EntityField, models.SET_NULL, null=True)
+class WordstemTranslation(models.Model):
     language = models.ForeignKey(Language, models.PROTECT)
     value = models.TextField()
 
-    class Meta:
-        unique_together = ("entity_type", "entity_id", "field", "language")
-        indexes = [
-            models.Index(fields=["entity_type", "entity_id", "field", "language"]),
-        ]
-
     def __str__(self):
-        return f"field '{self.field.field_name}' from the table '{self.entity_type.model}' = {self.value}"
+        return f"{self.language} : {self.value}"
 
 
 class Country(models.Model):
@@ -163,8 +154,7 @@ class Source(models.Model):
 class WordStem(models.Model):
     word_stem_id = models.BigAutoField(primary_key=True)
     word_stem_name = models.CharField(max_length=255)
-    fr_translations = models.ManyToManyField(Translation, related_name="fr_wordstems")
-    eng_translations = models.ManyToManyField(Translation, related_name="eng_wordstems")
+    translations = models.ManyToManyField(WordstemTranslation, related_name="fr_wordstems")
     gender = models.IntegerField(blank=True, null=True)
     word_class = models.IntegerField(blank=True, null=True)
     word_stem_language = models.IntegerField()

@@ -6,6 +6,7 @@ from .models import (
     SemanticField,
     Source,
     WordStem,
+    WordstemTranslation,
     Propernoun,
     Quote,
     SourceAuthor,
@@ -41,7 +42,11 @@ class WordStemAdmin(admin.ModelAdmin):
     inlines = [WordStemPropernounInline]
     filter_horizontal = ("child_stems",)
 
-
+@admin.register(WordstemTranslation)
+class WordStemAdmin(admin.ModelAdmin):
+    list_display = ("language", "value")
+    search_fields = ("value",)
+    
 @admin.register(Propernoun)
 class PropernounAdmin(admin.ModelAdmin):
     list_display = ("current_name", "lit_trans", "etymo_name", "country")
