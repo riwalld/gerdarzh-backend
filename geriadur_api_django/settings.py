@@ -30,7 +30,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", "gerdarzh.eu"]
 
-CSRF_TRUSTED_ORIGINS = ["https://gerdarzh.eu/","http://localhost"]
+CSRF_TRUSTED_ORIGINS = ["https://gerdarzh.eu","http://localhost"]
 
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 # Application definition
