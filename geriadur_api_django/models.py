@@ -157,17 +157,14 @@ class WordStem(models.Model):
     translations = models.ManyToManyField(WordstemTranslation, related_name="fr_wordstems")
     gender = models.IntegerField(blank=True, null=True)
     word_class = models.IntegerField(blank=True, null=True)
-    word_stem_language = models.IntegerField()
     language = models.ForeignKey(Language, models.PROTECT, blank=True, null=True)
     wordclass = models.ForeignKey(Wordclass, models.PROTECT, blank=True, null=True)
     w_gender = models.ForeignKey(Gender, models.PROTECT, blank=True, null=True)
-    first_occurence = models.IntegerField()
+    first_occurence = models.IntegerField(blank=True, null=True)
     sem_field = models.ForeignKey(SemanticField, models.SET_NULL, blank=True, null=True)
     descr_eng = models.CharField(max_length=255, blank=True, null=True)
     descr_fr = models.CharField(max_length=255, blank=True, null=True)
     phonetic = models.CharField(max_length=255, blank=True, null=True)
-    translation = models.CharField(max_length=255, blank=True, null=True)
-    ref_words_fr = models.CharField(max_length=255)
     source = models.ManyToManyField(Source, through="WordStemSource")
     child_stems = models.ManyToManyField(
         "self", symmetrical=False, blank=True, related_name="parent_stems_reverse"

@@ -37,7 +37,7 @@ class WordStemPropernounInline(admin.TabularInline):
 
 @admin.register(WordStem)
 class WordStemAdmin(admin.ModelAdmin):
-    list_display = ("word_stem_name", "word_stem_language")
+    list_display = ("word_stem_name",)
     search_fields = ("word_stem_name",)
     inlines = [WordStemPropernounInline]
     filter_horizontal = ("child_stems",)
