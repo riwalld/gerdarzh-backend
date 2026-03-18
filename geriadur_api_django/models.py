@@ -10,8 +10,7 @@ class Language(models.Model):
         db_table = "language"
 
     def __str__(self):
-        translation = self.translations.filter(lang='en').first()
-        return translation.name if translation else self.code
+        return f"{self.name} ({self.code})"
     
 class LanguageTranslation(models.Model):
     language = models.ForeignKey(Language, related_name='translations', on_delete=models.CASCADE)
