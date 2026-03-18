@@ -24,7 +24,6 @@ admin.site.register(Quote)
 admin.site.register(Language)
 admin.site.register(Wordclass)
 admin.site.register(Gender)
-
 admin.site.register(SourceAuthor)
 admin.site.register(WordStemQuote)
 admin.site.register(WordStemSource)
@@ -34,13 +33,22 @@ class WordStemPropernounInline(admin.TabularInline):
     model = WordStemPropernoun
     extra = 1
 
-
+class WordStemSourceInline(admin.TabularInline):
+    model = WordStemSource
+    extra = 1
+    
 @admin.register(WordStem)
 class WordStemAdmin(admin.ModelAdmin):
-    list_display = ("word_stem_name",)
-    search_fields = ("word_stem_name",)
+    inlines = [WordStemSourceInline]
+    fields = ('word_stem_name','translations','language','wordclass','w_gender','phonetic','descr_fr','descr_eng','sem_field','first_occurence','child_stems')
+    list_display = ("word_stem_name", "translations","language","wordclass")
+    search_fields = ("word_stem_name", "translations")
     inlines = [WordStemPropernounInline]
     filter_horizontal = ("child_stems",)
+    def translations(self, obj):
+        return ", ".join([st.fr_wordstems[:30] for st in obj.fr_wordstems.all()])
+    translations.short_description = "Translations"
+
 
 @admin.register(WordstemTranslation)
 class WordStemAdmin(admin.ModelAdmin):
