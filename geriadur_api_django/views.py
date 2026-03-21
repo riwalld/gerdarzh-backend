@@ -73,7 +73,7 @@ class WordstemListAPIView(APIView):
                 wordstems = wordstems.filter(language__code__in=codes)
         if smfields:
             semantics = [semantics.strip() for semantics in smfields.split(",") if smfields.strip()]
-            if codes and codes != ["all"]:
+            if semantics and semantics != ["all"]:
                 wordstems = wordstems.filter(sem_field__sem_field_id__in=semantics)
                 
         match order:
