@@ -17,6 +17,16 @@ class WordStemTranslationSerializer(serializers.Serializer):
         model = WordstemTranslation
         fields = '__all__'
         
+class LanguageTranslationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LanguageTranslation
+        fields = ('lang', 'name', 'abbr')
+        
+class LanguageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Language
+        fields = ('code', 'translations')
+        
 class LitTransSerializer(serializers.Serializer):
     litTransFr = serializers.CharField(source="name_fr")
     litTransEng = serializers.CharField(
@@ -44,7 +54,7 @@ class MiniWordStemSerializer(serializers.Serializer):
 class PropernounSerializer(serializers.Serializer):
     litTrans = LitTransSerializer(
         source="lit_trans"
-    )  # Nested serializer for the related LitTrans model
+    )
     currentName = serializers.CharField(source="current_name")
     etymoName = serializers.CharField(source="etymo_name")
     wordStemsPC = serializers.SerializerMethodField()
@@ -121,7 +131,7 @@ class SourceSerializer(serializers.ModelSerializer):
 class WordStemParentSerializer(serializers.ModelSerializer):
     parent_stems_reverse = serializers.SerializerMethodField()
     name = serializers.CharField(source="word_stem_name")
-    language = serializers.SerializerMethodField(source="language")
+    language = LanguageSerializer()
     translations = WordStemTranslationSerializer(many=True)
     class Meta:
         model = WordStem
@@ -135,9 +145,6 @@ class WordStemParentSerializer(serializers.ModelSerializer):
             "parent_stems_reverse",
         ]
 
-    def get_language(self, obj):
-        return constants.LANGUAGE_CHOICES.get(obj.language)
-
     def get_parent_stems_reverse(self, obj):
         return WordStemParentSerializer(obj.parent_stems_reverse.all(), many=True).data
 
@@ -145,7 +152,7 @@ class WordStemParentSerializer(serializers.ModelSerializer):
 class WordStemChildSerializer(serializers.ModelSerializer):
     child_stems = serializers.SerializerMethodField()
     name = serializers.CharField(source="word_stem_name")
-    language = serializers.SerializerMethodField(source="language")
+    language = LanguageSerializer()
     translations = WordStemTranslationSerializer(many=True)
     class Meta:
         model = WordStem
@@ -159,9 +166,6 @@ class WordStemChildSerializer(serializers.ModelSerializer):
             "child_stems",
         ]
 
-    def get_language(self, obj):
-        return constants.LANGUAGE_CHOICES.get(obj.language)
-
     def get_child_stems(self, obj):
         return WordStemChildSerializer(obj.child_stems.all(), many=True).data
     
@@ -170,7 +174,7 @@ class WordStemChildSerializer(serializers.ModelSerializer):
 class WordStemSerializer(serializers.Serializer):
     id = serializers.IntegerField(source="word_stem_id", required=False)
     name = serializers.CharField(source="word_stem_name")
-    wordStemLanguage = serializers.SerializerMethodField(source="language")
+    language = LanguageSerializer()
     wordClass = serializers.SerializerMethodField(source="wordclass")
     translations = WordStemTranslationSerializer(many=True)
     semanticField = serializers.PrimaryKeyRelatedField(
@@ -212,9 +216,6 @@ class WordStemSerializer(serializers.Serializer):
                 parent.child_stems.add(word_stem)
         return word_stem
 
-    def get_wordStemLanguage(self, obj):
-        return constants.LANGUAGE_CHOICES.get(obj.language)
-
     def get_gender(self, obj):
         return constants.GENDER_CHOICES.get(obj.gender)
 
@@ -222,7 +223,6 @@ class WordStemSerializer(serializers.Serializer):
         return constants.WORDCLASS_CHOICES.get(obj.word_class)
 
     def to_internal_value(self, data):
-        language_name = data.get("wordStemLanguage")
         gender_name = data.get("gender")
         wordClass_name = data.get("wordClass")
 
@@ -231,10 +231,6 @@ class WordStemSerializer(serializers.Serializer):
         except Exception as e:
             print(f"Error during desrialisation: {e}")
             raise
-
-        data["language"] = constants.get_keys_by_value(
-            constants.LANGUAGE_CHOICES, language_name
-        )
 
         data["gender"] = constants.get_keys_by_value(
             constants.GENDER_CHOICES, gender_name
@@ -245,12 +241,3 @@ class WordStemSerializer(serializers.Serializer):
         )
         return data
 
-class LanguageTranslationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = LanguageTranslation
-        fields = ('lang', 'name', 'abbr')
-        
-class LanguageSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Language
-        fields = ('code', 'translations')

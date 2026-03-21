@@ -6,23 +6,6 @@ GENDER_CHOICES = {
   4: "NO",
 }
 
-LANGUAGE_CHOICES = {
-  0: "LB",
-  1: "LOB",
-  2: "LBQ",
-  3: "LC",
-  5: "LF",
-  6: "LG",
-  7: "LGER",
-  8: "LIE",
-  9: "LIR",
-  10: "LOI",
-  11: "LS",
-  12: "LPC",
-  13: "LW",
-  14: "LLT",
-}
-
 WORDCLASS_CHOICES = {
   0: "WN",
   1: "WV",
@@ -36,7 +19,6 @@ WORDCLASS_CHOICES = {
 }
 
 
-LANGUAGE_CHOICES_REVERSE = {v: k for k, v in LANGUAGE_CHOICES.items()}
 GENDER_CHOICES_REVERSE = {v: k for k, v in GENDER_CHOICES.items()}
 WORDCLASS_CHOICES_REVERSE = {v: k for k, v in WORDCLASS_CHOICES.items()}
 
