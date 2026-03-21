@@ -12,7 +12,7 @@ from geriadur_api_django.models import SemanticField, Source, WordStem
 from rest_framework import serializers
 from geriadur_api_django import constants
 
-class WordStemTranslationSerializer(serializers.Serializer):
+class WordStemTranslationSerializer(serializers.ModelSerializer):
     class Meta:
         model = WordstemTranslation
         fields = '__all__'
@@ -202,7 +202,9 @@ class WordStemSerializer(serializers.Serializer):
     children_ids = serializers.ListField(
         child=serializers.IntegerField(), write_only=True, required=False
     )
-
+    class Meta:
+        model = WordStem
+        
     def create(self, validated_data):
         source_ids = validated_data.pop("source", [])
         parent_dicts = validated_data.pop("parents_ids", [])
