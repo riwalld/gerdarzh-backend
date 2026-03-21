@@ -25,7 +25,7 @@ class LanguageTranslationSerializer(serializers.ModelSerializer):
 class LanguageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Language
-        fields = ('code', 'translations')
+        fields = ('code', 'name')
         
 class LitTransSerializer(serializers.Serializer):
     litTransFr = serializers.CharField(source="name_fr")
