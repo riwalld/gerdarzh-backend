@@ -65,8 +65,17 @@ class WordstemAPIView(APIView):
         return Response(serializer.data)
 
 class WordstemListAPIView(APIView):
-    def get(self, request, order):
+    def get(self, request, order, lgs, smfields):
         wordstems = WordStem.objects.all()
+        if lgs:
+            codes = [code.strip() for code in lgs.split(",") if code.strip()]
+            if codes and codes != ["all"]:
+                wordstems = wordstems.filter(language__code__in=codes)
+        if smfields:
+            semantics = [semantics.strip() for semantics in smfields.split(",") if smfields.strip()]
+            if codes and codes != ["all"]:
+                wordstems = wordstems.filter(sem_field__sem_field_id__in=semantics)
+                
         match order:
             case "word":
                 wordstems = wordstems.order_by("word_stem_name")
