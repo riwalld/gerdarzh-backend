@@ -5,6 +5,7 @@ from django.contrib.contenttypes.models import ContentType
 class Language(models.Model):
     name = models.CharField(max_length=100)
     code = models.CharField(max_length=10, unique=True, null=True)
+    is_focus = models.BooleanField(default=True)
 
     class Meta:
         db_table = "language"
