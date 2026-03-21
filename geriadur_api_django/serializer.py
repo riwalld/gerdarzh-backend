@@ -12,7 +12,11 @@ from geriadur_api_django.models import SemanticField, Source, WordStem
 from rest_framework import serializers
 from geriadur_api_django import constants
 
-
+class WordStemTranslationSerializer(serializers.Serializer):
+    class Meta:
+        model = WordstemTranslation
+        fields = '__all__'
+        
 class LitTransSerializer(serializers.Serializer):
     litTransFr = serializers.CharField(source="name_fr")
     litTransEng = serializers.CharField(
@@ -27,15 +31,14 @@ class MiniWordStemSerializer(serializers.Serializer):
     id = serializers.IntegerField(source="word_stem_id")
     name = serializers.CharField(source="word_stem_name")
     lang = serializers.CharField(source="language")
-    fr = serializers.CharField(source="ref_words_fr")
-
+    translations = WordStemTranslationSerializer(many=True)
     class Meta:
         model = WordStem
         fields = [
             "word_stem_id",
             "name",
             "lang",
-            "ref_words_fr"
+            "translations"
         ]
 
 class PropernounSerializer(serializers.Serializer):
@@ -70,11 +73,7 @@ class PropernounSerializer(serializers.Serializer):
     def create(self, validated_data):
         lit_trans_data = validated_data.pop("lit_trans")
         wordstems_data = validated_data.pop("wordStemsPC")
-
-        # Create the LitTrans instance
         lit_trans_instance = LitTrans.objects.create(**lit_trans_data)
-
-        # Create the Propernoun instance with the lit_trans instance
         pn = Propernoun.objects.create(lit_trans=lit_trans_instance, **validated_data)
 
         i = 0
@@ -123,15 +122,14 @@ class WordStemParentSerializer(serializers.ModelSerializer):
     parent_stems_reverse = serializers.SerializerMethodField()
     name = serializers.CharField(source="word_stem_name")
     language = serializers.SerializerMethodField(source="language")
-
+    translations = WordStemTranslationSerializer(many=True)
     class Meta:
         model = WordStem
         fields = [
             "word_stem_id",
             "name",
             "language",
-            "ref_words_fr",
-            "ref_words_fr",
+            "translations",
             "first_occurence",
             "phonetic",
             "parent_stems_reverse",
@@ -148,15 +146,14 @@ class WordStemChildSerializer(serializers.ModelSerializer):
     child_stems = serializers.SerializerMethodField()
     name = serializers.CharField(source="word_stem_name")
     language = serializers.SerializerMethodField(source="language")
-
+    translations = WordStemTranslationSerializer(many=True)
     class Meta:
         model = WordStem
         fields = [
             "word_stem_id",
             "name",
             "language",
-            "ref_words_fr",
-            "ref_words_fr",
+            "translations",
             "first_occurence",
             "phonetic",
             "child_stems",
@@ -168,10 +165,7 @@ class WordStemChildSerializer(serializers.ModelSerializer):
     def get_child_stems(self, obj):
         return WordStemChildSerializer(obj.child_stems.all(), many=True).data
     
-class WordStemTranslationSerializer(serializers.Serializer):
-    class Meta:
-        model = WordstemTranslation
-        fields = '__all__'
+
 
 class WordStemSerializer(serializers.Serializer):
     id = serializers.IntegerField(source="word_stem_id", required=False)

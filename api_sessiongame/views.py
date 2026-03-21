@@ -18,7 +18,7 @@ def getSessionGameData(request):
         pCelticRadicalList = []
         for wordstemPC in properNoun.wordstempropernoun_set.all():
             
-            pCelticRadicalsDto = PCelticRadicalDto(wordstemPC.word_stem.word_stem_name, wordstemPC.word_stem.ref_words_fr)
+            pCelticRadicalsDto = PCelticRadicalDto(wordstemPC.word_stem.word_stem_name, wordstemPC.word_stem.translations)
             pCelticRadicalList.append(pCelticRadicalsDto)
 
         sessionGameData.append(asdict(GameSessionStepDto(proposedLiteralTranslationList, properNameDto, pCelticRadicalList)))
