@@ -41,8 +41,8 @@ class WordStemSourceInline(admin.TabularInline):
 class WordStemAdmin(admin.ModelAdmin):
     inlines = [WordStemSourceInline]
     fields = ('word_stem_name','translations','language','wordclass','w_gender','phonetic','descr_fr','descr_eng','sem_field','first_occurence','child_stems')
-    list_display = ("word_stem_name", "translations","language","wordclass")
-    search_fields = ("word_stem_name", "translations")
+    list_display = ("word_stem_name", "translations__value","language","wordclass")
+    search_fields = ("word_stem_name", "translations__value")
     inlines = [WordStemPropernounInline]
     filter_horizontal = ("child_stems",)
     def translations(self, obj):
