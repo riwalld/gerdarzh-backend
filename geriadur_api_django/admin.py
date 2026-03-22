@@ -41,13 +41,13 @@ class WordStemSourceInline(admin.TabularInline):
 class WordStemAdmin(admin.ModelAdmin):
     inlines = [WordStemSourceInline]
     fields = ('word_stem_name','translations','language','wordclass','w_gender','phonetic','descr_fr','descr_eng','sem_field','first_occurence','child_stems')
-    list_display = ("word_stem_name", "translations__value","language","wordclass")
+    list_display = ("word_stem_name", "translations_join","language","wordclass")
     search_fields = ("word_stem_name", "translations__value")
     inlines = [WordStemPropernounInline]
     filter_horizontal = ("child_stems",)
-    def translations(self, obj):
-        return ", ".join([st.fr_wordstems[:30] for st in obj.fr_wordstems.all()])
-    translations.short_description = "Translations"
+    def translations_join(self, obj):
+        return ", ".join([translation.value for translation in obj.translations.all()])
+    translations_join.short_description = "Translations"
 
 
 @admin.register(WordstemTranslation)
